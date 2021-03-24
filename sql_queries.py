@@ -12,10 +12,10 @@ songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS
     songplays (songplay_id SERIAL PRIMARY KEY,
         start_time BIGINT,
-        user_id INTEGER,
+        user_id INTEGER REFERENCES users (user_id),
         level VARCHAR,
-        song_id VARCHAR,
-        artist_id VARCHAR,
+        song_id VARCHAR REFERENCES songs (song_id),
+        artist_id VARCHAR REFERENCES artists (artist_id),
         session_id INTEGER,
         location VARCHAR,
         user_agent VARCHAR
@@ -42,8 +42,7 @@ CREATE TABLE IF NOT EXISTS
         artist_id VARCHAR,
         year INTEGER,
         duration NUMERIC,
-        UNIQUE (song_id, title,
-        artist_id, year, duration)
+        UNIQUE (song_id)
     );
 """)
 
@@ -55,8 +54,7 @@ CREATE TABLE IF NOT EXISTS
         location VARCHAR,
         latitude REAL,
         longitude REAL,
-        UNIQUE (artist_id, name,
-        location, latitude, longitude)
+        UNIQUE (artist_id)
     );
 """)
 
@@ -95,7 +93,7 @@ song_table_insert = ("""
 INSERT INTO
     songs (song_id, title, artist_id, year, duration)
 VALUES (%s, %s, %s, %s, %s)
-ON CONFLICT (song_id, title, artist_id, year, duration)
+ON CONFLICT (song_id)
 DO NOTHING;
 """)
 
@@ -103,7 +101,7 @@ artist_table_insert = ("""
 INSERT INTO
     artists (artist_id, name, location, latitude, longitude)
 VALUES (%s, %s, %s, %s, %s)
-ON CONFLICT (artist_id, name, location, latitude, longitude)
+ON CONFLICT (artist_id)
 DO NOTHING;
 """)
 
@@ -127,6 +125,6 @@ WHERE s.title=%s and a.name=%s and s.duration=%s ;
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create,
-                        time_table_create]
+create_table_queries = [user_table_create, song_table_create, artist_table_create,
+                        time_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]

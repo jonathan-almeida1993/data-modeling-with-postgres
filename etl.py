@@ -72,7 +72,6 @@ def process_log_file(cur, filepath):
         
         if results:
             songid, artistid = results
-            print(songid, artistid)
         else:
             songid, artistid = None, None
 
